@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Services } from "../services/services";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const handleChange = (e) => {
@@ -11,9 +14,18 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
+    const token = await Services.login(formData["email"], formData["password"]);
+
+    if (token) {
+      localStorage.setItem('token', token["token"]);
+      navigate("/userhome", { replace: true });
+    }
+    console.log("this is the token", token);
+    console.log(formData["email"]);
+    console.log(formData["password"]);
   };
 
   return (
@@ -21,10 +33,14 @@ const Login = () => {
       <h2 className="text-2xl font-semibold mb-4">Login</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700"
+          >
             Email
           </label>
           <input
+            // value="john@example.com"
             type="email"
             id="email"
             name="email"
@@ -35,10 +51,14 @@ const Login = () => {
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700"
+          >
             Password
           </label>
           <input
+            // value="securepassword"
             type="password"
             id="password"
             name="password"
